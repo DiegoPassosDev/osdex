@@ -15,23 +15,51 @@ async function main() {
 
   console.log("Restaurante criado:", restaurant.name);
 
-  const passwordHash = await bcrypt.hash("12345678", 12);
+  const isProd = process.env.NODE_ENV === "production";
+  const adminPassword =
+    process.env.SEED_ADMIN_PASSWORD ?? (isProd ? undefined : "12345678");
+  const adminPin = process.env.SEED_ADMIN_PIN ?? (isProd ? undefined : "1234");
 
-  const manager = await prisma.employee.upsert({
-    where: { email: "admin@osdex.com.br" },
-    update: {},
+  if (!adminPassword || !adminPin) {
+    console.error(
+      "Defina SEED_ADMIN_PASSWORD e SEED_ADMIN_PIN para rodar o seed em produção.",
+    );
+    process.exit(1);
+  }
+
+  const adminHash = await bcrypt.hash(adminPassword, 12);
+  const adminPinHash = await bcrypt.hash(adminPin, 12);
+
+  const admin = await prisma.employee.upsert({
+    where: { email: "fluixit@gmail.com" },
+    update: {
+      name: "Administrador",
+      passwordHash: adminHash,
+      pin: adminPinHash,
+      role: EmployeeRole.MANAGER,
+      restaurantId: restaurant.id,
+      active: true,
+    },
     create: {
       name: "Administrador",
-      email: "admin@osdex.com.br",
-      passwordHash,
-      pin: "1234",
+      email: "fluixit@gmail.com",
+      passwordHash: adminHash,
+      pin: adminPinHash,
       role: EmployeeRole.MANAGER,
       restaurantId: restaurant.id,
       active: true,
     },
   });
 
-  console.log("Gestor criado:", manager.email);
+  console.log("Administrador criado:", admin.email);
+
+  const deactivated = await prisma.employee.updateMany({
+    where: { email: "admin@osdex.com.br" },
+    data: { active: false },
+  });
+  console.log("Conta admin@osdex.com.br desativada:", deactivated.count);
+
+  const passwordHash = await bcrypt.hash("12345678", 12);
 
   const printer = await prisma.printer.upsert({
     where: { id: "default-printer-cozinha" },

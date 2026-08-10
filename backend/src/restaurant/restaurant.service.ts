@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmployeeRole } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
@@ -12,13 +13,29 @@ import { OnboardingDto } from './dto/onboarding.dto';
 
 @Injectable()
 export class RestaurantService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {}
 
   async create(dto: CreateRestaurantDto) {
     return this.prisma.restaurant.create({ data: dto });
   }
 
   async onboarding(dto: OnboardingDto) {
+    const ownerEmails = (
+      this.config.get<string>('ONBOARDING_ADMIN_EMAILS') || 'fluixit@gmail.com'
+    )
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (ownerEmails.includes(dto.managerEmail.trim().toLowerCase())) {
+      throw new ConflictException(
+        'Não é possível usar o e-mail do administrador do sistema.',
+      );
+    }
+
     return this.prisma.$transaction(async (tx) => {
       const existing = await tx.employee.findUnique({
         where: { email: dto.managerEmail },
