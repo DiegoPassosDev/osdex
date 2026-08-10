@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const PUBLIC_ROUTES = ["/login", "/api", "/device"];
 
 const ROLE_ROUTES: Record<string, string[]> = {
-  MANAGER: ["/manager"],
+  MANAGER: ["/manager", "/onboarding"],
   WAITER: ["/waiter"],
   KITCHEN: ["/kitchen"],
   BAR: ["/kitchen"],
