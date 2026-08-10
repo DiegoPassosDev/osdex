@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import {
   LogIn,
   UtensilsCrossed,
   ClipboardList,
   Users,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import Image from "next/image";
 import { CustomToaster } from "@/components/ui/Toast";
@@ -16,6 +19,7 @@ const inputClass =
 
 export default function LoginPage() {
   const { form, loading, handleChange, handleSubmit } = useLoginPage();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="fixed inset-0 flex overflow-hidden">
@@ -132,19 +136,33 @@ export default function LoginPage() {
               <label className="text-sm font-medium text-gray-300 mb-1.5 block">
                 Senha
               </label>
-              <input
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
-                placeholder="Digite sua senha"
-                value={form.password}
-                onChange={handleChange}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                className={inputClass}
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  placeholder="Digite sua senha"
+                  value={form.password}
+                  onChange={handleChange}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  className={`${inputClass} pr-11`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button
