@@ -18,8 +18,20 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
 
+  const frontendUrls = (process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((url) => url.trim())
+    .filter(Boolean);
+
+  const corsOrigin =
+    !isProduction || frontendUrls.length === 0
+      ? true
+      : frontendUrls.length === 1
+        ? frontendUrls[0]
+        : frontendUrls;
+
   app.enableCors({
-    origin: isProduction ? process.env.FRONTEND_URL : true,
+    origin: corsOrigin,
     credentials: true,
   });
 
