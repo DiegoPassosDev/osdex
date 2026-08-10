@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RestaurantAccessGuard } from '../common/guards/restaurant-access.guard';
+import { OnboardingOwnerGuard } from '../auth/guards/onboarding-owner.guard';
 
 @Controller('employees')
 export class EmployeesController {
@@ -30,6 +31,13 @@ export class EmployeesController {
   @Post('login')
   login(@Body() dto: EmployeeLoginDto) {
     return this.employeesService.login(dto);
+  }
+
+  @Get('admin/restaurant/:restaurantId')
+  @UseGuards(JwtAuthGuard, RolesGuard, OnboardingOwnerGuard)
+  @Roles('MANAGER')
+  findAdminByRestaurant(@Param('restaurantId') restaurantId: string) {
+    return this.employeesService.findAllByRestaurant(restaurantId);
   }
 
   @Get('restaurant/:restaurantId')

@@ -203,7 +203,9 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const allowedLocations = ['cozinha', 'bar', 'caixa'];
 
     if (!data?.restaurantId || !data?.location) {
-      client.emit('join_device_error', { message: 'restaurantId e location são obrigatórios.' });
+      client.emit('join_device_error', {
+        message: 'restaurantId e location são obrigatórios.',
+      });
       return;
     }
 
@@ -214,12 +216,16 @@ export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     if (user?.restaurantId && user.restaurantId !== data.restaurantId) {
-      client.emit('join_device_error', { message: 'Acesso negado a este restaurante.' });
+      client.emit('join_device_error', {
+        message: 'Acesso negado a este restaurante.',
+      });
       return;
     }
 
     void client.join(`device_${data.restaurantId}_${location}`);
-    client.emit('join_device_success', { room: `device_${data.restaurantId}_${location}` });
+    client.emit('join_device_success', {
+      room: `device_${data.restaurantId}_${location}`,
+    });
   }
 
   // Notifica dispositivos de impressão

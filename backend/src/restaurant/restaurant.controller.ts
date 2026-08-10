@@ -36,6 +36,7 @@ export class RestaurantController {
   }
 
   @Get()
+  @UseGuards(OnboardingOwnerGuard)
   @Roles('MANAGER')
   findAll() {
     return this.restaurantService.findAll();
@@ -54,6 +55,7 @@ export class RestaurantController {
   }
 
   @Delete(':id')
+  @UseGuards(OnboardingOwnerGuard)
   @Roles('MANAGER')
   remove(@Param('id') id: string) {
     return this.restaurantService.remove(id);

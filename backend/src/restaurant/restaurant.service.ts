@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { EmployeeRole } from '@prisma/client';
+import { EmployeeRole, TableSessionStatus } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -48,7 +48,15 @@ export class RestaurantService {
           logoUrl: dto.logoUrl,
           cnpj: dto.cnpj,
           phone: dto.phone,
-          address: dto.address,
+          address:
+            dto.address ??
+            [dto.street, dto.number, dto.neighborhood]
+              .filter(Boolean)
+              .join(', '),
+          zipCode: dto.zipCode,
+          street: dto.street,
+          number: dto.number,
+          neighborhood: dto.neighborhood,
           city: dto.city,
           state: dto.state,
           serviceCharge: dto.serviceCharge,
@@ -85,9 +93,31 @@ export class RestaurantService {
   }
 
   async findAll() {
-    return this.prisma.restaurant.findMany({
+    const restaurants = await this.prisma.restaurant.findMany({
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        logoUrl: true,
+        cnpj: true,
+        phone: true,
+        address: true,
+        zipCode: true,
+        street: true,
+        number: true,
+        neighborhood: true,
+        city: true,
+        state: true,
+        active: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            tables: true,
+            categories: true,
+            employees: true,
+          },
+        },
         employees: {
           where: { role: EmployeeRole.MANAGER },
           select: {
@@ -100,6 +130,54 @@ export class RestaurantService {
         },
       },
     });
+
+    const [menuItemsByCategory, activeSessionsByRestaurant, categories] =
+      await Promise.all([
+        this.prisma.menuItem.groupBy({
+          by: ['categoryId'],
+          _count: { _all: true },
+        }),
+        this.prisma.tableSession.groupBy({
+          by: ['restaurantId'],
+          where: { status: { not: TableSessionStatus.CLOSED } },
+          _count: { _all: true },
+        }),
+        this.prisma.category.findMany({
+          select: { id: true, restaurantId: true },
+        }),
+      ]);
+
+    const categoryRestaurant = new Map(
+      categories.map((category) => [category.id, category.restaurantId]),
+    );
+
+    const menuItemsByRestaurant = new Map<string, number>();
+    for (const group of menuItemsByCategory) {
+      const restaurantId = categoryRestaurant.get(group.categoryId);
+      if (!restaurantId) continue;
+      menuItemsByRestaurant.set(
+        restaurantId,
+        (menuItemsByRestaurant.get(restaurantId) || 0) + group._count._all,
+      );
+    }
+
+    const activeSessions = new Map(
+      activeSessionsByRestaurant.map((group) => [
+        group.restaurantId,
+        group._count._all,
+      ]),
+    );
+
+    return restaurants.map((restaurant) => ({
+      ...restaurant,
+      stats: {
+        tables: restaurant._count.tables,
+        menuItems: menuItemsByRestaurant.get(restaurant.id) || 0,
+        employees: restaurant._count.employees,
+        activeSessions: activeSessions.get(restaurant.id) || 0,
+      },
+      _count: undefined,
+    }));
   }
 
   async findOne(id: string) {

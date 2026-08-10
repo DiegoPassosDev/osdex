@@ -3,11 +3,12 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
+import { isAdminEmail } from '../../common/admin.util';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    config: ConfigService,
+    private config: ConfigService,
     private prisma: PrismaService,
   ) {
     super({
@@ -33,9 +34,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const employee = await this.prisma.employee.findUnique({
       where: { id: payload.sub },
+      include: { restaurant: { select: { active: true } } },
     });
 
     if (!employee || !employee.active) throw new UnauthorizedException();
+
+    const admin = isAdminEmail(employee.email, this.config);
+
+    if (!admin && employee.restaurant && !employee.restaurant.active)
+      throw new UnauthorizedException();
 
     return {
       id: employee.id,

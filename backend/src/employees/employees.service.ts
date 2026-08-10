@@ -5,10 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeLoginDto } from './dto/employee-login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { isAdminEmail } from '../common/admin.util';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -16,6 +19,7 @@ export class EmployeesService {
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
+    private config: ConfigService,
   ) {}
 
   async create(dto: CreateEmployeeDto) {
@@ -93,9 +97,22 @@ export class EmployeesService {
       }
     }
 
+    const data: Prisma.EmployeeUpdateInput = {
+      ...dto,
+    };
+
+    if (dto.password) {
+      data.passwordHash = await bcrypt.hash(dto.password, 12);
+      delete (data as any).password;
+    }
+    if (dto.pin) {
+      data.pin = await bcrypt.hash(dto.pin, 12);
+      delete (data as any).pin;
+    }
+
     return this.prisma.employee.update({
       where: { id },
-      data: dto,
+      data,
       select: {
         id: true,
         name: true,
@@ -110,11 +127,19 @@ export class EmployeesService {
   async login(dto: EmployeeLoginDto) {
     const employee = await this.prisma.employee.findUnique({
       where: { email: dto.email },
+      include: { restaurant: { select: { active: true } } },
     });
 
     if (!employee || !employee.active)
       throw new UnauthorizedException(
         'Credenciais inválidas ou conta inativa.',
+      );
+
+    const admin = isAdminEmail(employee.email, this.config);
+
+    if (!admin && employee.restaurant && !employee.restaurant.active)
+      throw new UnauthorizedException(
+        'Restaurante desativado. Contate o administrador.',
       );
 
     const valid = await bcrypt.compare(dto.password, employee.passwordHash);

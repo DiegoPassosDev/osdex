@@ -25,6 +25,7 @@ model Restaurant {
   serviceCharge   Float    @default(10)
   cancelWindowMin Int      @default(3)
   acceptWindowMin Int      @default(2)
+  active          Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

@@ -40,10 +40,7 @@ export class PrintersService {
     return this.prisma.printer.findMany({
       where: { restaurantId },
       include: { rules: true },
-      orderBy: [
-        { active: 'desc' },
-        { name: 'asc' },
-      ],
+      orderBy: [{ active: 'desc' }, { name: 'asc' }],
     });
   }
 

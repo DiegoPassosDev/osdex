@@ -147,7 +147,10 @@ export class PaymentsService {
     });
 
     // Marca todos os pedidos pendentes como DELIVERED
-    await this.ordersService.deliverPendingOrders(data.sessionId, data.restaurantId);
+    await this.ordersService.deliverPendingOrders(
+      data.sessionId,
+      data.restaurantId,
+    );
 
     this.gateway.notifyTableSessionUpdate(session.restaurantId, {
       ...closedSession,
@@ -191,8 +194,16 @@ export class PaymentsService {
   private async sendReceiptToPrint(
     restaurantId: string,
     tableNumber: number,
-    orders: Prisma.OrderGetPayload<{ include: { items: { include: { menuItem: true } } } }>[],
-    payment: Prisma.PaymentGetPayload<{ include: { paymentItems: true; cashier: true; session: { include: { table: true } } } }>,
+    orders: Prisma.OrderGetPayload<{
+      include: { items: { include: { menuItem: true } } };
+    }>[],
+    payment: Prisma.PaymentGetPayload<{
+      include: {
+        paymentItems: true;
+        cashier: true;
+        session: { include: { table: true } };
+      };
+    }>,
   ) {
     try {
       const [printers, restaurant] = await Promise.all([
@@ -239,13 +250,28 @@ export class PaymentsService {
     }
   }
 
-  private composeAddress(restaurant: { street?: string | null; number?: string | null; neighborhood?: string | null; city?: string | null; state?: string | null; address?: string | null } | null): string | null {
+  private composeAddress(
+    restaurant: {
+      street?: string | null;
+      number?: string | null;
+      neighborhood?: string | null;
+      city?: string | null;
+      state?: string | null;
+      address?: string | null;
+    } | null,
+  ): string | null {
     if (!restaurant) return null;
-    const streetLine = [restaurant.street, restaurant.number].filter(Boolean).join(', ');
-    const cityLine = [restaurant.neighborhood, restaurant.city && restaurant.state
-      ? `${restaurant.city}/${restaurant.state}`
-      : restaurant.city || restaurant.state,
-    ].filter(Boolean).join(' - ');
+    const streetLine = [restaurant.street, restaurant.number]
+      .filter(Boolean)
+      .join(', ');
+    const cityLine = [
+      restaurant.neighborhood,
+      restaurant.city && restaurant.state
+        ? `${restaurant.city}/${restaurant.state}`
+        : restaurant.city || restaurant.state,
+    ]
+      .filter(Boolean)
+      .join(' - ');
 
     if (!streetLine && !cityLine) {
       return restaurant.address ?? null;

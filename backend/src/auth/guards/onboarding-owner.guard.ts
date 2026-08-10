@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { isAdminEmail } from '../../common/admin.util';
 
 @Injectable()
 export class OnboardingOwnerGuard implements CanActivate {
@@ -16,14 +17,8 @@ export class OnboardingOwnerGuard implements CanActivate {
       .getRequest<{ user?: { email?: string } }>();
 
     const email = request.user?.email;
-    const allowed = (
-      this.config.get<string>('ONBOARDING_ADMIN_EMAILS') || 'fluixit@gmail.com'
-    )
-      .split(',')
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean);
 
-    if (!email || !allowed.includes(email.toLowerCase())) {
+    if (!isAdminEmail(email, this.config)) {
       throw new ForbiddenException(
         'Apenas o administrador do sistema pode cadastrar restaurantes.',
       );

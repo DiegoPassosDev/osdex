@@ -43,15 +43,17 @@ export function SlideUpModal({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-end",
+        "fixed inset-0 z-50 flex items-end sm:items-center",
         closing ? "animate-fade-out" : "animate-fade-in",
       )}
     >
       <div className="absolute inset-0 bg-black/60" onClick={close} />
       <div
         className={cn(
-          "relative w-full max-w-md mx-auto bg-gray-800 border-t border-gray-700 rounded-t-3xl",
-          closing ? "animate-slide-down" : "animate-slide-up",
+          "relative w-full max-w-md mx-auto bg-gray-800 border-t sm:border border-gray-700 rounded-t-3xl sm:rounded-2xl sm:shadow-2xl",
+          closing
+            ? "animate-slide-down sm:animate-modal-out"
+            : "animate-slide-up sm:animate-modal-in",
           className,
         )}
       >

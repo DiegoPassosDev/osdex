@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  MinLength,
 } from 'class-validator';
 import { EmployeeRole } from '@prisma/client';
 
@@ -23,4 +24,14 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(8)
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(4)
+  pin?: string;
 }

@@ -338,7 +338,10 @@ export class OrdersService {
     restaurantId: string,
     tableNumber: number,
     order: Prisma.OrderGetPayload<{
-      include: { items: { include: { menuItem: { include: { category: true } } } }; session: true };
+      include: {
+        items: { include: { menuItem: { include: { category: true } } } };
+        session: true;
+      };
     }>,
   ) {
     try {

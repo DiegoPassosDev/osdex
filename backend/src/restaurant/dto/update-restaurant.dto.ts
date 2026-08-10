@@ -1,4 +1,11 @@
-import { IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class UpdateRestaurantDto {
   @IsOptional()
@@ -61,4 +68,8 @@ export class UpdateRestaurantDto {
   @IsNumber()
   @Min(1)
   acceptWindowMin?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  active?: boolean;
 }
