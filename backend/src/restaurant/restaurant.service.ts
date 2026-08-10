@@ -1,7 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmployeeRole } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { OnboardingDto } from './dto/onboarding.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -9,6 +16,55 @@ export class RestaurantService {
 
   async create(dto: CreateRestaurantDto) {
     return this.prisma.restaurant.create({ data: dto });
+  }
+
+  async onboarding(dto: OnboardingDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.employee.findUnique({
+        where: { email: dto.managerEmail },
+      });
+      if (existing) throw new ConflictException('E-mail já cadastrado.');
+
+      const restaurant = await tx.restaurant.create({
+        data: {
+          name: dto.name,
+          logoUrl: dto.logoUrl,
+          cnpj: dto.cnpj,
+          phone: dto.phone,
+          address: dto.address,
+          city: dto.city,
+          state: dto.state,
+          serviceCharge: dto.serviceCharge,
+          cancelWindowMin: dto.cancelWindowMin,
+          acceptWindowMin: dto.acceptWindowMin,
+        },
+      });
+
+      const passwordHash = await bcrypt.hash(dto.managerPassword, 12);
+      const pinHash = await bcrypt.hash(dto.managerPin, 12);
+
+      const manager = await tx.employee.create({
+        data: {
+          name: dto.managerName,
+          email: dto.managerEmail,
+          passwordHash,
+          pin: pinHash,
+          role: EmployeeRole.MANAGER,
+          restaurantId: restaurant.id,
+          active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          active: true,
+          restaurantId: true,
+        },
+      });
+
+      return { restaurant, manager };
+    });
   }
 
   async findAll() {

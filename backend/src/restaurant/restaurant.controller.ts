@@ -11,6 +11,7 @@ import {
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { OnboardingDto } from './dto/onboarding.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -19,6 +20,12 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class RestaurantController {
   constructor(private restaurantService: RestaurantService) {}
+
+  @Post('onboarding')
+  @Roles('MANAGER')
+  onboarding(@Body() dto: OnboardingDto) {
+    return this.restaurantService.onboarding(dto);
+  }
 
   @Post()
   @Roles('MANAGER')
