@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LucideIcon, Menu, Store, X } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
+import { isAdminEmail } from "@/lib/admin";
 
 interface NavItem {
   href: string;
@@ -16,21 +17,12 @@ interface SidebarProps {
   items: NavItem[];
 }
 
-const ADMIN_EMAILS = (
-  process.env.NEXT_PUBLIC_ONBOARDING_ADMIN_EMAILS || "fluixit@gmail.com"
-)
-  .split(",")
-  .map((email) => email.trim().toLowerCase())
-  .filter(Boolean);
-
 export function Sidebar({ items }: SidebarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const employee = useAuthStore((state) => state.employee);
 
-  const isAdmin = employee
-    ? ADMIN_EMAILS.includes(employee.email.toLowerCase())
-    : false;
+  const isAdmin = isAdminEmail(employee?.email);
 
   const navItems = isAdmin
     ? [

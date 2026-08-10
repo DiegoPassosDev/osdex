@@ -8,11 +8,12 @@ import {
   User,
   UserPlus,
   Loader2,
-  ArrowLeft,
+  LogOut,
   CheckCircle2,
 } from "lucide-react";
 import { CustomToaster } from "@/components/ui/Toast";
 import { ThemeToggle } from "@/components/theme/ThemeProvider";
+import { useAuthStore } from "@/store/auth.store";
 import { useOnboardingPage } from "./useOnboardingPage";
 
 const inputClass =
@@ -20,6 +21,7 @@ const inputClass =
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
   const {
     form,
     loading,
@@ -29,6 +31,11 @@ export default function OnboardingPage() {
     handleChange,
     handleSubmit,
   } = useOnboardingPage();
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col relative overflow-hidden">
@@ -53,11 +60,11 @@ export default function OnboardingPage() {
           <div className="w-full max-w-lg bg-gray-800 rounded-3xl border border-gray-700 shadow-2xl p-8 mx-auto">
           <div className="flex items-center justify-between mb-8">
             <button
-              onClick={() => router.push("/manager")}
+              onClick={handleLogout}
               className="flex items-center gap-2 text-gray-400 hover:text-white text-sm transition"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar
+              <LogOut className="w-4 h-4" />
+              Sair
             </button>
             <div className="flex items-center gap-2">
               <Image

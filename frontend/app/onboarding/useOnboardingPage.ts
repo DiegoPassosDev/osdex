@@ -6,13 +6,7 @@ import { api } from "@/lib/api";
 import { toast } from "@/components/ui/Toast";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { useAuthStore } from "@/store/auth.store";
-
-const ALLOWED_ADMIN_EMAILS = (
-  process.env.NEXT_PUBLIC_ONBOARDING_ADMIN_EMAILS || "fluixit@gmail.com"
-)
-  .split(",")
-  .map((email) => email.trim().toLowerCase())
-  .filter(Boolean);
+import { isAdminEmail } from "@/lib/admin";
 
 export interface RestaurantManager {
   id: string;
@@ -44,7 +38,7 @@ export function useOnboardingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (employee && !ALLOWED_ADMIN_EMAILS.includes(employee.email.toLowerCase())) {
+    if (employee && !isAdminEmail(employee.email)) {
       router.replace("/manager");
     }
   }, [employee, router]);

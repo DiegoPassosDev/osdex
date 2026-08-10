@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
+import { isAdminEmail } from "@/lib/admin";
 
 type RequiredRole =
   | "MANAGER"
@@ -13,6 +14,7 @@ type RequiredRole =
 export function useRequireAuth(role: RequiredRole | RequiredRole[]) {
   const { token, employee } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   const allowedRoles = useMemo(
     () => (Array.isArray(role) ? role : [role]).map((r) => r.toUpperCase() as RequiredRole),
@@ -41,6 +43,16 @@ export function useRequireAuth(role: RequiredRole | RequiredRole[]) {
       return;
     }
 
+    // Administrador do sistema — só gerencia os cadastros de restaurantes
+    if (
+      employee &&
+      isAdminEmail(employee.email) &&
+      !pathname.startsWith("/onboarding")
+    ) {
+      router.replace("/onboarding");
+      return;
+    }
+
     // Rota de cliente — funcionário não pode acessar
     if (isGuestRoute && employee) {
       router.replace("/login");
@@ -52,5 +64,5 @@ export function useRequireAuth(role: RequiredRole | RequiredRole[]) {
       router.replace("/login");
       return;
     }
-  }, [token, employee, allowedRoles, isGuestRoute, router]);
+  }, [token, employee, allowedRoles, isGuestRoute, router, pathname]);
 }
