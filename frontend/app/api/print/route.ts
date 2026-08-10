@@ -38,7 +38,7 @@ function getAuthToken(request: Request): string | null {
   }
   const cookieHeader = request.headers.get("Cookie");
   if (cookieHeader) {
-    const match = cookieHeader.match(/ordex_auth_token=([^;]+)/);
+    const match = cookieHeader.match(/osdex_auth_token=([^;]+)/);
     if (match) return match[1];
   }
   return null;

@@ -22,7 +22,7 @@ export interface AppNotification {
   tableNumber?: number;
 }
 
-const SOUND_ENABLED_KEY = "ordex-sound-enabled";
+const SOUND_ENABLED_KEY = "osdex-sound-enabled";
 
 const TYPE_CONFIG: Record<NotificationType, { icon: string; color: string }> = {
   new_order: { icon: "🍽️", color: "text-blue-400" },

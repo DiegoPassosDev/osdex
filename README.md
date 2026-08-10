@@ -1,4 +1,4 @@
-# Ordex
+# OSdex
 
 Sistema de gestão de restaurante com pedidos em tempo real via WebSocket, voltado para mesas, cozinha, garçons e caixa.
 
@@ -75,16 +75,16 @@ cd frontend && pnpm dev
 
 | Role | Email | Password |
 |------|-------|----------|
-| Manager | `gestor@ordex.com` | `123456` |
-| Cashier | `caixa@ordex.com` | `123456` |
-| Waiter | `garcom1@ordex.com` | `123456` |
-| Kitchen | `cozinha@ordex.com` | `123456` |
-| Bar | `bar@ordex.com` | `123456` |
+| Manager | `gestor@osdex.com` | `123456` |
+| Cashier | `caixa@osdex.com` | `123456` |
+| Waiter | `garcom1@osdex.com` | `123456` |
+| Kitchen | `cozinha@osdex.com` | `123456` |
+| Bar | `bar@osdex.com` | `123456` |
 
 ## Project Structure
 
 ```
-ordex/
+osdex/
 ├── backend/                # NestJS API
 │   ├── prisma/
 │   │   ├── schema.prisma   # Database models

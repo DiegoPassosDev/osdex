@@ -365,7 +365,7 @@ export class OrdersService {
             ip: printer.ip,
             port: printer.port,
           },
-          restaurantName: restaurant?.name ?? 'ORDEX',
+          restaurantName: restaurant?.name ?? 'OSDEX',
           tableNumber,
           orderId: order.id,
           items: itemsToPrint.map((item) => ({

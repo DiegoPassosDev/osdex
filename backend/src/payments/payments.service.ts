@@ -217,7 +217,7 @@ export class PaymentsService {
           ip: caixaPrinter.ip,
           port: caixaPrinter.port,
         },
-        restaurantName: restaurant?.name ?? 'ORDEX',
+        restaurantName: restaurant?.name ?? 'OSDEX',
         restaurantCnpj: restaurant?.cnpj ?? null,
         restaurantAddress: this.composeAddress(restaurant),
         restaurantPhone: restaurant?.phone ?? null,

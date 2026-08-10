@@ -40,7 +40,7 @@ function LoginCustomerInner() {
         {/* Logo */}
         <div className="flex items-center gap-2 mb-5">
           <div className="w-9 h-9 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
-            <Image src="/icone-ordex.svg" alt="OSdex" width={24} height={24} className="w-6 h-6" />
+            <Image src="/icone-osdex.svg" alt="OSdex" width={24} height={24} className="w-6 h-6" />
           </div>
               <span className="text-white text-xl font-bold">OSdex</span>
         </div>

@@ -157,7 +157,7 @@ export function useTableAccessAlerts() {
         const tableLabel = tableNumber ? ` na mesa ${tableNumber}` : "";
         const notification = new Notification("Pedido de acesso à mesa", {
           body: `${guestName} quer entrar${tableLabel}.`,
-          tag: "ordex-table-access",
+          tag: "osdex-table-access",
           requireInteraction: true,
         });
 

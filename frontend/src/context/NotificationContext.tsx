@@ -70,8 +70,8 @@ const NotificationContext = createContext<NotificationContextValue | null>(
   null,
 );
 
-const SOUND_KEY = "ordex-sound-enabled";
-const NOTIF_KEY = "ordex-notifications";
+const SOUND_KEY = "osdex-sound-enabled";
+const NOTIF_KEY = "osdex-notifications";
 
 // ── Som ──────────────────────────────────────────────────────────────────────
 

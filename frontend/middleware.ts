@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Lê o store do Zustand salvo no cookie
-  const authCookie = request.cookies.get("ordex_auth")?.value;
+  const authCookie = request.cookies.get("osdex_auth")?.value;
 
   if (!authCookie) {
     if (pathname.startsWith("/table")) {

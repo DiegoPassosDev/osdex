@@ -18,11 +18,11 @@ async function main() {
   const passwordHash = await bcrypt.hash("12345678", 12);
 
   const manager = await prisma.employee.upsert({
-    where: { email: "admin@ordex.com.br" },
+    where: { email: "admin@osdex.com.br" },
     update: {},
     create: {
       name: "Administrador",
-      email: "admin@ordex.com.br",
+      email: "admin@osdex.com.br",
       passwordHash,
       pin: "1234",
       role: EmployeeRole.MANAGER,
@@ -56,11 +56,11 @@ async function main() {
   console.log("Impressora criada:", printer.name);
 
   const waiter = await prisma.employee.upsert({
-    where: { email: "garcom@ordex.com.br" },
+    where: { email: "garcom@osdex.com.br" },
     update: {},
     create: {
       name: "Garçom Teste",
-      email: "garcom@ordex.com.br",
+      email: "garcom@osdex.com.br",
       passwordHash,
       pin: "1234",
       role: EmployeeRole.WAITER,

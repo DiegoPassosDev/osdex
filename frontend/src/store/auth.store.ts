@@ -5,12 +5,12 @@ import { Employee, Guest } from "@/types";
 function setCookie(value: string) {
   if (typeof document === "undefined") return;
   const secure = window.location.protocol === "https:" ? "; secure" : "";
-  document.cookie = `ordex_auth=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict${secure}`;
+  document.cookie = `osdex_auth=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict${secure}`;
 }
 
 function deleteCookie() {
   if (typeof document === "undefined") return;
-  document.cookie = "ordex_auth=; path=/; max-age=0";
+  document.cookie = "osdex_auth=; path=/; max-age=0";
 }
 
 interface AuthState {
@@ -155,7 +155,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "ordex_auth",
+      name: "osdex_auth",
       // ✅ Persiste tudo EXCETO dados de sessão/mesa do cliente
       partialize: (state) => ({
         token: state.token,

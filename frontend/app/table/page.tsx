@@ -257,7 +257,7 @@ function TableProfileContent({ p }: { p: ReturnType<typeof useTablePage> }) {
       </div>
       {p.hasTable && (
         <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-gray-700/30 rounded-xl">
-          <Image src="/icone-ordex.svg" alt="OSdex" width={14} height={14} className="w-5 h-5 shrink-0" />
+          <Image src="/icone-osdex.svg" alt="OSdex" width={14} height={14} className="w-5 h-5 shrink-0" />
           <p className="text-sm text-gray-300">
             Mesa{" "}
             <span className="font-semibold text-white">
@@ -370,7 +370,7 @@ function TablePageInner() {
               onClick={() => !p.hasTable && p.setScanning(true)}
               className="flex items-center gap-1.5 mt-0.5"
             >
-              <Image src="/icone-ordex.svg" alt="OSdex" width={12} height={12} className="w-4 h-4 shrink-0" />
+              <Image src="/icone-osdex.svg" alt="OSdex" width={12} height={12} className="w-4 h-4 shrink-0" />
               <span className="text-sm font-bold text-white truncate">
                 {p.hasTable ? `Mesa ${p.tableNumber}` : "Selecione sua mesa"}
               </span>

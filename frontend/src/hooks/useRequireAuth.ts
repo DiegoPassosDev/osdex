@@ -24,11 +24,11 @@ export function useRequireAuth(role: RequiredRole | RequiredRole[]) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const persistedAuth = window.localStorage.getItem("ordex_auth");
+    const persistedAuth = window.localStorage.getItem("osdex_auth");
     const authCookie = document.cookie
       .split(";")
       .map((item) => item.trim())
-      .find((item) => item.startsWith("ordex_auth="));
+      .find((item) => item.startsWith("osdex_auth="));
 
     // Sem nenhuma autenticação
     if (!token && !persistedAuth && !authCookie) {

@@ -47,8 +47,8 @@ export function isReceipt(job: PrintJob): job is PrintReceipt {
 
 type PrintMode = "browser" | "network";
 
-const STORAGE_KEY = "ordex_device_config";
-const COMANDAS_KEY = "ordex_device_comandas";
+const STORAGE_KEY = "osdex_device_config";
+const COMANDAS_KEY = "osdex_device_comandas";
 const BATCH_SIZE = 20;
 const SCAN_TIMEOUT = 300;
 
@@ -97,7 +97,7 @@ export function useDevicePage() {
 
   const connectSocket = useCallback(
     (restId: string) => {
-      const token = localStorage.getItem("ordex_auth_token") || "";
+      const token = localStorage.getItem("osdex_auth_token") || "";
       const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "/";
 
       const socket = io(wsUrl, {
@@ -200,7 +200,7 @@ export function useDevicePage() {
     const printerPort = comanda.printer.port || 9100;
 
     const lines: string[] = [];
-    lines.push(`${BOLD_ON}${CENTER}${comanda.restaurantName ?? "ORDEX"}${BOLD_OFF}`);
+    lines.push(`${BOLD_ON}${CENTER}${comanda.restaurantName ?? "OSDEX"}${BOLD_OFF}`);
     lines.push(`${CENTER}PEDIDO${LEFT}`);
     lines.push("─".repeat(32));
     lines.push(`Mesa: ${comanda.tableNumber}`);
@@ -363,7 +363,7 @@ export function useDevicePage() {
 <body>
   <div class="comanda-wrap">
     <div class="header">
-      <h1>${comanda.restaurantName ?? "ORDEX"}</h1>
+      <h1>${comanda.restaurantName ?? "OSDEX"}</h1>
       <div class="meta">PEDIDO</div>
     </div>
     <div class="meta">

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "OSdex — Sistema de Gestão para Restaurantes",
   description: "Gerencie pedidos, mesas e equipes em tempo real",
   icons: {
-    icon: "/icone-ordex.svg",
+    icon: "/icone-osdex.svg",
   },
 };
 
@@ -47,7 +47,7 @@ export default function RootLayout({
             __html: `
           (function() {
             try {
-              var stored = localStorage.getItem('ordex-theme');
+              var stored = localStorage.getItem('osdex-theme');
               var theme = stored === 'light' || stored === 'dark'
                 ? stored
                 : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';

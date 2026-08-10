@@ -39,7 +39,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex flex-col justify-center flex-1">
           <div className="flex items-center gap-3 mb-10">
-            <Image src="/icone-ordex.svg" alt="OSdex" width={56} height={56} className="w-14 h-14" />
+            <Image src="/icone-osdex.svg" alt="OSdex" width={56} height={56} className="w-14 h-14" />
             <span className="text-white text-3xl font-bold tracking-tight">
               OSdex
             </span>
@@ -99,7 +99,7 @@ export default function LoginPage() {
         <div className="relative z-10 w-full max-w-sm bg-gray-800 rounded-3xl border border-gray-700 shadow-2xl p-6 lg:bg-transparent lg:rounded-none lg:border-0 lg:shadow-none lg:p-0">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6">
-              <Image src="/icone-ordex.svg" alt="OSdex" width={36} height={36} className="w-9 h-9" />
+              <Image src="/icone-osdex.svg" alt="OSdex" width={36} height={36} className="w-9 h-9" />
               <span className="text-white text-xl font-bold">OSdex</span>
             </div>
             <h2 className="text-2xl font-bold text-white">Acesso restrito</h2>

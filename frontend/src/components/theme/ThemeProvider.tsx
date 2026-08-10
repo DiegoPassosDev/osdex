@@ -12,7 +12,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-const STORAGE_KEY = "ordex-theme";
+const STORAGE_KEY = "osdex-theme";
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
