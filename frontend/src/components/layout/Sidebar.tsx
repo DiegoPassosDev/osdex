@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon, Menu, X } from "lucide-react";
+import { LucideIcon, Menu, Store, X } from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
 
 interface NavItem {
   href: string;
@@ -15,12 +16,35 @@ interface SidebarProps {
   items: NavItem[];
 }
 
+const ADMIN_EMAILS = (
+  process.env.NEXT_PUBLIC_ONBOARDING_ADMIN_EMAILS || "fluixit@gmail.com"
+)
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
 export function Sidebar({ items }: SidebarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const employee = useAuthStore((state) => state.employee);
+
+  const isAdmin = employee
+    ? ADMIN_EMAILS.includes(employee.email.toLowerCase())
+    : false;
+
+  const navItems = isAdmin
+    ? [
+        ...items,
+        {
+          href: "/onboarding",
+          icon: Store,
+          label: "Restaurantes",
+        },
+      ]
+    : items;
 
   const renderNavItems = (mobile = false) =>
-    items.map((item) => {
+    navItems.map((item) => {
       const Icon = item.icon;
       const active =
         item.href === "/manager"

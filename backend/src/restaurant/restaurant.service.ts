@@ -87,6 +87,18 @@ export class RestaurantService {
   async findAll() {
     return this.prisma.restaurant.findMany({
       orderBy: { createdAt: 'desc' },
+      include: {
+        employees: {
+          where: { role: EmployeeRole.MANAGER },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            active: true,
+          },
+        },
+      },
     });
   }
 

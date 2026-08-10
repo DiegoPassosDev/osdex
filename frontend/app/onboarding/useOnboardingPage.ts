@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/Toast";
@@ -13,6 +13,18 @@ const ALLOWED_ADMIN_EMAILS = (
   .split(",")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
+
+export interface RestaurantManager {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface RestaurantSummary {
+  id: string;
+  name: string;
+  managers: RestaurantManager[];
+}
 
 const initialForm = {
   restaurantName: "",
@@ -43,6 +55,34 @@ export function useOnboardingPage() {
     restaurantName: string;
     email: string;
   } | null>(null);
+  const [restaurants, setRestaurants] = useState<RestaurantSummary[]>([]);
+  const [loadingRestaurants, setLoadingRestaurants] = useState(true);
+
+  const loadRestaurants = useCallback(async () => {
+    setLoadingRestaurants(true);
+    try {
+      const { data } = await api.get("/restaurants");
+      setRestaurants(
+        data.map((restaurant: any) => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          managers: (restaurant.employees || []).map((employee: any) => ({
+            id: employee.id,
+            name: employee.name,
+            email: employee.email,
+          })),
+        })),
+      );
+    } catch {
+      setRestaurants([]);
+    } finally {
+      setLoadingRestaurants(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRestaurants();
+  }, [loadRestaurants]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -78,6 +118,7 @@ export function useOnboardingPage() {
       });
       setForm(initialForm);
       toast.success("Restaurante e gestor criados!");
+      await loadRestaurants();
     } catch (err: any) {
       const message =
         err?.response?.data?.message || "Erro ao criar restaurante.";
@@ -87,5 +128,13 @@ export function useOnboardingPage() {
     }
   }
 
-  return { form, loading, created, handleChange, handleSubmit };
+  return {
+    form,
+    loading,
+    created,
+    restaurants,
+    loadingRestaurants,
+    handleChange,
+    handleSubmit,
+  };
 }
