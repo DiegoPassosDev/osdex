@@ -753,9 +753,17 @@ export default function CashierPage() {
                         )}
                       </p>
                     </div>
-                    <p className="text-sm font-bold text-green-400">
-                      R$ {payment.finalAmount?.toFixed(2)}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className="text-sm font-bold text-green-400">
+                        R$ {payment.finalAmount?.toFixed(2)}
+                      </p>
+                      <button
+                        onClick={() => p.handleReprint(payment)}
+                        className="px-2 py-1 rounded-lg bg-gray-700/50 border border-gray-600 text-gray-400 text-xs hover:text-blue-400 hover:border-blue-500/30 transition-all"
+                      >
+                        Reimprimir
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -768,6 +776,37 @@ export default function CashierPage() {
         onCancel={() => setShowLogoutModal(false)}
         onConfirm={p.handleLogout}
       />
+
+      {/* Modal de confirmação de impressão */}
+      {p.showPrintDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                <Receipt className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">Imprimir Comprovante?</h3>
+                <p className="text-xs text-gray-400">Deseja enviar para a impressora?</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => p.handlePrintChoice(false)}
+                className="flex-1 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600 text-gray-300 text-sm font-medium hover:bg-gray-700 transition-all"
+              >
+                Não
+              </button>
+              <button
+                onClick={() => p.handlePrintChoice(true)}
+                className="flex-1 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold transition-all"
+              >
+                Sim, Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

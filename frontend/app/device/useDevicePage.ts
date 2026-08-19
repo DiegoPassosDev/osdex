@@ -102,7 +102,7 @@ export function useDevicePage() {
 
       const socket = io(wsUrl, {
         auth: { token },
-        transports: ["websocket", "polling"],
+        transports: ["polling"],
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,

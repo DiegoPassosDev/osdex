@@ -31,6 +31,7 @@ export class PaymentsService {
     notes?: string;
     authorizedBy?: string;
     paymentItems?: { method: PaymentMethod; amount: number }[];
+    printReceipt?: boolean;
   }) {
     const session = await this.prisma.tableSession.findUnique({
       where: { id: data.sessionId },
@@ -180,13 +181,15 @@ export class PaymentsService {
       },
     });
 
-    // Envia comprovante para impressora do caixa
-    await this.sendReceiptToPrint(
-      data.restaurantId,
-      session.table?.number ?? 0,
-      session.orders,
-      payment,
-    );
+    // Envia comprovante para impressora do caixa (somente se solicitado)
+    if (data.printReceipt !== false) {
+      await this.sendReceiptToPrint(
+        data.restaurantId,
+        session.table?.number ?? 0,
+        session.orders,
+        payment,
+      );
+    }
 
     return payment;
   }
@@ -425,5 +428,35 @@ export class PaymentsService {
         transactions: { orderBy: { createdAt: 'desc' } },
       },
     });
+  }
+
+  async printReceipt(paymentId: string) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: {
+        paymentItems: true,
+        cashier: true,
+        session: {
+          include: {
+            table: true,
+            orders: {
+              where: { status: { not: 'CANCELLED' } },
+              include: { items: { include: { menuItem: true } } },
+            },
+          },
+        },
+      },
+    });
+
+    if (!payment) throw new NotFoundException('Pagamento não encontrado.');
+
+    await this.sendReceiptToPrint(
+      payment.restaurantId,
+      payment.session.table?.number ?? 0,
+      payment.session.orders,
+      payment,
+    );
+
+    return { success: true };
   }
 }

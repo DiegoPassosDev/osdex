@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsEnum, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, IsBoolean, Min } from 'class-validator';
 import { PaymentMethod } from '@prisma/client';
 
 export class CreatePaymentDto {
@@ -31,4 +31,8 @@ export class CreatePaymentDto {
   @IsOptional()
   @IsString()
   authorizedBy?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  printReceipt?: boolean;
 }

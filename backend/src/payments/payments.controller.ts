@@ -63,4 +63,10 @@ export class PaymentsController {
   ) {
     return this.service.payDebt(debtId, body.amount, body.authorizedBy);
   }
+
+  @Post(':paymentId/print')
+  @Roles('CASHIER', 'MANAGER')
+  printReceipt(@Param('paymentId') paymentId: string) {
+    return this.service.printReceipt(paymentId);
+  }
 }
