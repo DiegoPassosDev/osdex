@@ -21,10 +21,10 @@ export function useSocket(
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "/";
 
     const socket = io(wsUrl, {
-      transports: ["websocket"],
+      transports: ["polling", "websocket"],
       auth: { token },
-      reconnectionDelay: 2000,
-      reconnectionDelayMax: 10000,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
     socketRef.current = socket;
 

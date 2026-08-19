@@ -21,7 +21,7 @@ type SocketUser = {
   cors: {
     origin:
       process.env.NODE_ENV === 'production'
-        ? [process.env.FRONTEND_URL].filter(Boolean)
+        ? (process.env.FRONTEND_URL || '').split(',').map((u) => u.trim()).filter(Boolean)
         : true,
     credentials: true,
   },
